@@ -1,0 +1,61 @@
+---
+title: "Week 2 Exercises"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(plotrix)
+```
+
+
+```{r 2.2, include=FALSE}
+girls <- c(.4777, .4875, .4859, .4754, .4874, .4864, .4813, .4787, .4895, .4797, .4876, .4859,
+.4857, .4907, .5010, .4903, .4860, .4911, .4871, .4725, .4822, .4870, .4823, .4973)
+
+sdg <- round(std.error(girls)*sqrt(24), 6)
+
+seg <- round(sqrt(mean(girls)*(1 - mean(girls))/3900), 6)
+
+
+chi <- round(23*sdg^2/seg^2, 3)
+
+```
+
+## Question 2.2
+
+A. The standard deviation of the given proportions is `r sdg` while the estimated standard deviation if the sexes of babies were independently decided with a constant probability over the 24-month period is `r seg`.
+
+B. The difference between these two numbers is not statistically significant. Performing a chi-squared test yields a test statistic of `r chi` which does not exceed the critical value with 23 degrees of freedom, insufficient to demonstrate significance.
+
+
+## Quesion 2.3
+
+```{r 2.3}
+
+set.seed(3)
+
+yuh <- replicate(1000, sum(sample(c(0,1), size = 20, prob = c(0.5,0.5), replace = TRUE)))
+
+yuh <- as.tibble(yuh)
+
+yuh %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(binwidth = 1, color = "white", aes(y = ..density..)) +
+  stat_function(
+		fun = dnorm, 
+		args = with(yuh, c(mean = mean(value), sd = sd(value))),
+		color = "red") +
+  theme_light() + 
+  labs(title = "Density of Sums",
+       x = "Sums",
+       y = "Density")
+
+
+
+```
+
+The histogram pretty closely follows the normal distribution curve. It is not as perfectly symmetrical and there is some deviance from the exact predicted value, but this is to be expected in a random sampling of this size.
+
